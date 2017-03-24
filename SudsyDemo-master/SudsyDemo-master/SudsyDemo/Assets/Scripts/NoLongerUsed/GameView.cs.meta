@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: d51a449fe2b0d3a4485c1b6a52806ae0
+timeCreated: 1490313711
+licenseType: Free
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - mudTile: {fileID: 1362532384222994, guid: 2f8a9d4313298744e96ef357405a6e72, type: 2}
+  - bgTile: {fileID: 1981021445926940, guid: d664e60402f723945ba35c97233736ee, type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

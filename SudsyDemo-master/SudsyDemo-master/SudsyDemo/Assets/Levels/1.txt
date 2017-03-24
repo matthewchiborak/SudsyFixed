@@ -1,2 +1,2 @@
-2~1
-1~1
+{"width":6, "height":6, "start":{"row":0, "col":0}, "end":{"row":5, "col":0}, tiles:[]}
+

@@ -2,34 +2,23 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Assets;
+using Assets.Scripts;
 using UnityEngine.UI;
 using System.IO;
 using System.Text;
 using System;
 
-//Later probably save deep copy of player object for items etc
-public class MoveHistory
-{
-    public int row, col;
-    public Tile tile;
-
-    public MoveHistory(int row, int col, Tile t)
-    {
-        this.row = row;
-        this.col = col;
-        tile = t;
-    }
-}
 
 public class GameBoard : MonoBehaviour {
+
+    //Shared event queues
+    SafeQueue<GameBoardEvent> gbEventQueue;
+
 
     public int width = 6;
     public int height = 6;
 
     Stack<MoveHistory> history;
-    
-    public GameObject mudOverlay;
-    public GameObject bgTile;
 
     public ActorPlayer player = new ActorPlayer();
 
@@ -40,7 +29,6 @@ public class GameBoard : MonoBehaviour {
 
     public Image loadingScreen;
 
-    //Deafult constructor, private as it is a singleton class
     public GameBoard()
     {
 
@@ -50,6 +38,8 @@ public class GameBoard : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
+
+
 
         //Initialize the board
         for (int i = 0; i < height; i++)
@@ -63,7 +53,7 @@ public class GameBoard : MonoBehaviour {
                 tile.setPos(i, j);
                 row.Add(tile);
 
-                tileRow.Add(Instantiate(bgTile, new Vector3(i, j, .01f), Quaternion.identity));
+                //tileRow.Add(Instantiate(GameGraphics.BackGroundTile, new Vector3(i, j, .01f), Quaternion.identity));
             }
 
             board.Add(row);
@@ -82,28 +72,22 @@ public class GameBoard : MonoBehaviour {
 
         //Draw screen
 
-        
-            for (int col = width - 1; col >= 0; col--)
-            {
-                List<GameObject> objRow = new List<GameObject>();
+
+        for (int col = 0; col < width; col++)
+        {
+            List<GameObject> objrow = new List<GameObject>();
 
             for (int row = 0; row < height; row++)
             {
-                GameObject obj = Instantiate(mudOverlay, new Vector3(row, col, 0), Quaternion.identity);
-                objRow.Add(obj);
+                //GameObject obj = Instantiate(GameGraphics.MudTile, new Vector3(row, col, 0), Quaternion.identity);
+                //objrow.Add(obj);
 
             }
-            boardObj.Add(objRow);
+            boardObj.Add(objrow);
 
         }
     }
 
-
-    public void addHistory(int x, int y, Tile t)
-    {
-        MoveHistory h = new MoveHistory(x, y, t);
-        history.Push(h);
-    }
 
     public MoveHistory getHistory()
     {
@@ -114,6 +98,12 @@ public class GameBoard : MonoBehaviour {
 	// Update is called once per frame
 	void Update ()
     {
+        if ( (gbEventQueue != null) && (!gbEventQueue.isEmpty()) )
+        {
+            GameBoardEvent cur = gbEventQueue.Dequeue();
+            this.doGameEvent(cur);
+        }
+
         for (int row = 0; row < board.Count; row++)
         {
             for (int col = 0; col < board[row].Count; col++)
@@ -147,7 +137,7 @@ public class GameBoard : MonoBehaviour {
 
     public void doGameEvent(GameBoardEvent ev)
     {
-        bool res = ev.doEvent(this);
+        bool res = ev.doEvent();
         print(res);
         printPlayerPos();
     }
@@ -207,7 +197,7 @@ public class GameBoard : MonoBehaviour {
                 row.Add(tile);
 
                 //Create the object and store the returned reference
-                tileRow.Add(Instantiate(bgTile, new Vector3(i, j, .01f), Quaternion.identity));
+                //tileRow.Add(Instantiate(GameGraphics.BackGroundTile, new Vector3(i, j, .01f), Quaternion.identity));
             }
 
             board.Add(row);
@@ -228,8 +218,8 @@ public class GameBoard : MonoBehaviour {
 
             for (int row = 0; row < height; row++)
             {
-                GameObject obj = Instantiate(mudOverlay, new Vector3(row, col, 0), Quaternion.identity);
-                objRow.Add(obj);
+                //GameObject obj = Instantiate(GameGraphics.MudTile, new Vector3(row, col, 0), Quaternion.identity);
+                //objRow.Add(obj);
             }
 
             boardObj.Add(objRow);
@@ -252,5 +242,10 @@ public class GameBoard : MonoBehaviour {
 
         //Loading has finished so release the play area
         loadingScreen.enabled = false;
+    }
+
+    public void addGameBoardEventQueue(SafeQueue<GameBoardEvent> q)
+    {
+        gbEventQueue = q;
     }
 }

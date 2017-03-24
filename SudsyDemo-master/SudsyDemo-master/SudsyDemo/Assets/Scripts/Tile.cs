@@ -2,67 +2,64 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UnityEngine;
 
-namespace Assets
+public class Tile
 {
 
+    //insert move behaviour
+    public int row, col;
+    public TileType type ;
+    private MoveBehavior moveBehaviour;
 
-    public class Tile
+    public Tile(TileType type, MoveBehavior mvb)
     {
-
-        //insert move behaviour
-        public int row, col;
-        public TileType type ;
-        private MoveBehavior moveBehaviour;
-
-        public Tile(TileType type, MoveBehavior mvb)
-        {
-            this.type = type;
-            moveBehaviour = mvb;
-
-        }
-
-        public Boolean doMoveEvent(Actor act, GameBoard gb)
-        {
-
-            return moveBehaviour.move(act, this, gb);
-
-        }
-
-        public Boolean setPos(int row, int col)
-        {
-
-            this.row = row;
-            this.col = col;
-
-            return true;
-
-        }
+        this.type = type;
+        moveBehaviour = mvb;
 
     }
 
-
-    public class MoveableTile : Tile
+    public Boolean doMoveEvent(Actor act, GameBoardModel gb)
     {
-        int moves = 0;
 
-        public MoveableTile(TileType type, MoveBehavior mvb) : base(type, mvb)
-        {
+        return moveBehaviour.move(act, this, gb);
 
-        }
+    }
 
-        public Boolean isMoveable()
-        {
-            return moves > 0;
-        }
+    public Boolean setPos(int row, int col)
+    {
 
-        public Boolean setMoves(int moves)
-        {
-            this.moves = moves;
+        this.row = row;
+        this.col = col;
 
-            return true;
-        }
+        return true;
 
     }
 
 }
+
+
+public class MoveableTile : Tile
+{
+    int moves = 0;
+
+    public MoveableTile(TileType type, MoveBehavior mvb) : base(type, mvb)
+    {
+
+    }
+
+    public Boolean isMoveable()
+    {
+        return moves > 0;
+    }
+
+    public Boolean setMoves(int moves)
+    {
+        this.moves = moves;
+
+        return true;
+    }
+
+}
+
+

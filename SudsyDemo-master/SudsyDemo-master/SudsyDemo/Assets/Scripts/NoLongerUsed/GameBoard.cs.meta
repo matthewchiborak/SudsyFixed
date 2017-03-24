@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 0114af0f44e232a40966f61aec9da51a
+timeCreated: 1490312904
+licenseType: Free
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - mudOverlay: {instanceID: 0}
+  - bgTile: {instanceID: 0}
+  - loadingScreen: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

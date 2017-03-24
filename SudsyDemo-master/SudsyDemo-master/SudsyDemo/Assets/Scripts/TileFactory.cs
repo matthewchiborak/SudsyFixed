@@ -3,38 +3,42 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Assets
+
+public enum TileType { Clean, Dirty, Block, Start, End }
+
+class TileFactoryMethods
 {
-
-    public enum TileType { Clean, Dirty, Block }
-
-    class TileFactoryMethods
-    {
 
         
 
-        public static Tile TileFactory(TileType t)
+    public static Tile TileFactory(TileType t)
+    {
+
+        switch (t)
         {
 
-            switch (t)
-            {
+            case TileType.Clean:
+                return new Tile(t, new MoveBehaviorBlock());
 
-                case TileType.Clean:
-                    return new Tile(t, new MoveBehaviorBlock());
+            case TileType.Dirty:
+                return new Tile(t, new MoveBehaviorDefult()); 
 
-                case TileType.Dirty:
-                   return new Tile(t, new MoveBehaviorDeafult()); 
+            case TileType.Block:
+                return new MoveableTile(t, new MoveBehaviorBlock());
 
-                case TileType.Block:
-                    return new MoveableTile(t, new MoveBehaviorBlock()); 
+            case TileType.Start:
+                return new Tile(t, new MoveBehaviorBlock());
 
-                default:
-                    return new Tile(t, new MoveBehaviorDeafult()); 
+            case TileType.End:
+                return new Tile(t, new MoveBehaviorDefult());
 
-            }
-           
+            default:
+                return new Tile(t, new MoveBehaviorDefult()); 
 
         }
+           
 
     }
+
 }
+

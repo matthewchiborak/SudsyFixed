@@ -2,120 +2,143 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UnityEngine;
 
-namespace Assets
+public class GameBoardEvent : SudsyElement
 {
-    public class GameBoardEvent
+    protected GameBoardModel gb;
+
+    public GameBoardEvent()
     {
-
-        public GameBoardEvent() { }
-
-        public virtual Boolean doEvent(GameBoard gb)
-        {
-            return false;
-        }
-
+        
     }
 
-    public class PlayerMoveEvent : GameBoardEvent
+    private void Start()
     {
-
-        public PlayerMoveEvent() { }
-
+        gb = app.game_board_model;
     }
 
-    //Undo move event
-    public class GameBoardUndoEvent : GameBoardEvent
+    public virtual Boolean doEvent()
     {
-
-        public override Boolean doEvent(GameBoard gb)
-        {
-
-            MoveHistory h = gb.getHistory();
-            if (h == null) return true;
-
-            gb.board[h.row][h.col] = h.tile;
-
-            gb.player.currentTile = gb.board[h.row][h.col];
-            gb.player.row = h.row;
-            gb.player.col = h.col;
-
-            return true;
-
-        }
-
+        return false;
     }
 
-    //move player up event
-    public class PlayerMoveEventUp : PlayerMoveEvent
-    {
-
-        public override Boolean doEvent(GameBoard gb)
-        {
-
-            ActorPlayer p = gb.player;
-
-            if (p.row <= 0) return false;
-
-            Tile tile = gb.board[p.row - 1][p.col];
-
-            return tile.doMoveEvent(p, gb);
-
-        }
-
-    }
-
-    public class PlayerMoveEventLeft : PlayerMoveEvent
-    {
-
-        public override Boolean doEvent(GameBoard gb)
-        {
-
-            ActorPlayer p = gb.player;
-
-            if (p.col <= 0) return false;
-
-            Tile tile = gb.board[p.row][p.col - 1];
-
-            return tile.doMoveEvent(p, gb);
-
-        }
-
-    }
-
-    public class PlayerMoveEventDown : PlayerMoveEvent
-    {
-
-        public override Boolean doEvent(GameBoard gb)
-        {
-
-            ActorPlayer p = gb.player;
-
-            if (p.row >= (gb.height - 1) ) return false;
-
-            Tile tile = gb.board[p.row + 1][p.col];
-
-            return tile.doMoveEvent(p, gb);
-
-        }
-
-    }
-
-    public class PlayerMoveEventRight : PlayerMoveEvent
-    {
-
-        public override Boolean doEvent(GameBoard gb)
-        {
-
-            ActorPlayer p = gb.player;
-
-            if (p.col >= (gb.width - 1) ) return false;
-
-            Tile tile = gb.board[p.row][p.col + 1];
-
-            return tile.doMoveEvent(p, gb);
-
-        }
-
-    }
 }
+
+//Undo move event
+public class GameBoardUndoEvent : GameBoardEvent
+{
+
+    public GameBoardUndoEvent() : base() { }
+
+    public override Boolean doEvent()
+    {
+
+        if (gb.history.Count == 0) return false;
+
+        MoveHistory h = gb.history.Pop();
+
+        Tile t = h.tile;
+
+        gb.board[t.row][t.col] = t;
+
+        gb.player = h.player;
+
+        return false;
+
+    }
+
+}
+
+
+public class ActorMoveEvent : GameBoardEvent
+{
+    protected Actor act;
+
+    public ActorMoveEvent() : base()
+    {         }
+
+    public void addActor(Actor act)
+    {
+        this.act = act;
+    }
+
+    public override Boolean doEvent()
+    {
+        return false;
+    }
+
+}
+
+
+public class ActorMoveEventUp : ActorMoveEvent
+{
+
+    public ActorMoveEventUp() : base() { }
+
+    public override Boolean doEvent()
+    {
+
+        if (act.row >= (gb.height - 1)) return false;
+
+        Tile tile = gb.board[act.row + 1][act.col];
+
+        return tile.doMoveEvent(act, gb);
+
+    }
+
+}
+
+public class ActorMoveEventDown : ActorMoveEvent
+{
+
+    public ActorMoveEventDown() : base() { }
+
+    public override Boolean doEvent()
+    {
+
+        if (act.row <= 0) return false;
+
+        Tile tile = gb.board[act.row - 1][act.col];
+
+        return tile.doMoveEvent(act, gb);
+
+    }
+
+}
+
+public class ActorMoveEventLeft : ActorMoveEvent
+{
+    public ActorMoveEventLeft() : base() { }
+
+    public override Boolean doEvent()
+    {
+
+        if (act.col <= 0) return false;
+
+        Tile tile = gb.board[act.row][act.col - 1];
+
+        return tile.doMoveEvent(act, gb);
+
+    }
+
+}
+
+public class ActorMoveEventRight : ActorMoveEvent
+{
+
+    public ActorMoveEventRight() : base() { }
+
+    public override Boolean doEvent()
+    {
+
+        if (act.col >= (gb.width - 1)) return false;
+
+        Tile tile = gb.board[act.row][act.col + 1];
+
+        return tile.doMoveEvent(act, gb);
+
+    }
+
+}
+

@@ -3,42 +3,61 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Assets
+
+public class Actor
 {
-    
 
-    public class Actor
+    public int row, col;
+    public List<String> type;
+    public Tile currentTile;
+
+    //Deafult Constructor
+    public Actor()
     {
-
-        public int row, col;
-        public List<String> type;
-        public Tile currentTile;
-
-        //Deafult Constructor
-        public Actor()
-        {
-            row = col = 0;
-            type = new List<String>();
-        }
-
-
+        row = col = 0;
+        type = new List<String>();
     }
 
-    public class ActorPlayer : Actor
+    //Make a deep copy
+    public Actor clone()
     {
+        Actor result = new Actor();
 
-        public ActorPlayer()
-        {
+        result.row = this.row;
+        result.col = this.col;
+        result.type = this.type;
+        result.currentTile = this.currentTile;
 
-            type.Add("player");
-
-        }
-
-    }
-
-    public class ActorEnemy : Actor
-    {
-
-        public ActorEnemy() { }
+        return result;
     }
 }
+
+public class ActorPlayer : Actor
+{
+
+    public ActorPlayer()
+    {
+
+        type.Add("player");
+
+    }
+
+    public new ActorPlayer clone()
+    {
+        ActorPlayer result = new ActorPlayer();
+
+        result.row = this.row;
+        result.col = this.col;
+        result.type = this.type;
+        result.currentTile = this.currentTile;
+
+        return result;
+    }
+}
+
+public class ActorEnemy : Actor
+{
+
+    public ActorEnemy() { }
+}
+
